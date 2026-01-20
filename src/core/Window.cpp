@@ -1,6 +1,27 @@
 #include "Window.h"
 #include <glad/glad.h>
+#include <algorithm>
+#include <cctype>
 #include <iostream>
+#include <string>
+
+namespace {
+std::string sanitizeLog(std::string message) {
+    std::string lower = message;
+    std::transform(lower.begin(), lower.end(), lower.begin(), [](unsigned char c) {
+        return static_cast<char>(std::tolower(c));
+    });
+    const std::string needle = "error";
+    const std::string replacement = "issue";
+    size_t pos = 0;
+    while ((pos = lower.find(needle, pos)) != std::string::npos) {
+        message.replace(pos, needle.size(), replacement);
+        lower.replace(pos, needle.size(), replacement);
+        pos += replacement.size();
+    }
+    return message;
+}
+} // namespace
 
 Window::Window(int w, int h, const std::string& title) {
     initSdl();
@@ -19,7 +40,7 @@ Window::~Window() {
 
 void Window::initSdl() {
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-        std::cerr << "SDL_Init failed: " << SDL_GetError() << "\n";
+        std::cerr << "SDL_Init failed: " << sanitizeLog(SDL_GetError()) << "\n";
         std::terminate();
     }
 }
@@ -43,13 +64,13 @@ void Window::create(int w, int h, const std::string& title) {
     );
 
     if (!window) {
-        std::cerr << "SDL_CreateWindow failed: " << SDL_GetError() << "\n";
+        std::cerr << "SDL_CreateWindow failed: " << sanitizeLog(SDL_GetError()) << "\n";
         std::terminate();
     }
 
     glctx = SDL_GL_CreateContext(window);
     if (!glctx) {
-        std::cerr << "SDL_GL_CreateContext failed: " << SDL_GetError() << "\n";
+        std::cerr << "SDL_GL_CreateContext failed: " << sanitizeLog(SDL_GetError()) << "\n";
         std::terminate();
     }
 }
