@@ -48,9 +48,11 @@ find_package(SDL2 CONFIG REQUIRED)
 find_package(glad CONFIG REQUIRED)
 find_package(glm CONFIG REQUIRED)
 
-target_link_libraries(my_engine PRIVATE
-  SDL2::SDL2
-  SDL2::SDL2main
-  glad::glad
-  glm::glm
-)
+if(TARGET ${MY_ENGINE_TARGET})
+  target_link_libraries(${MY_ENGINE_TARGET} PRIVATE
+    SDL2::SDL2
+    SDL2::SDL2main
+    glad::glad
+    glm::glm
+  )
+endif()
