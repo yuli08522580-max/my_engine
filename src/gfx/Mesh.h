@@ -13,6 +13,9 @@ public:
     Mesh& operator=(Mesh&& other) noexcept;
 
     static Mesh triangle2D();
+    static Mesh marioSprite();
+    static Mesh marioSprite(int frame);
+    static Mesh dotSprite(float size = 0.05f);
     void draw() const;
 
 private:
