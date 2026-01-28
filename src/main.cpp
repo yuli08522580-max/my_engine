@@ -1,3 +1,5 @@
+#include <SDL.h>  // ★ SDL は一番上あたりで読み込む
+
 #include "core/Window.h"
 #include "gfx/Shader.h"
 #include "gfx/Mesh.h"
@@ -5,7 +7,7 @@
 #include <glad/glad.h>
 #include <cmath>
 
-int main() {
+int main(int argc, char* argv[]) {  // ★ 引数付き main にする
     Window window(1280, 720, "my_engine");
 
     Shader shader = Shader::basicColor();
