@@ -28,6 +28,7 @@ if(MY_ENGINE_BUILD)
         src/gfx/Renderer.cpp
         src/gfx/Shader.cpp
         src/gfx/Mesh.cpp
+        src/objects/DotObject.cpp
         src/objects/MarioObject.cpp
         src/objects/TriangleObject.cpp
         src/scene/Scene.cpp

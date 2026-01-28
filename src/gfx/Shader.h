@@ -15,9 +15,11 @@ public:
     static Shader fromSource(const char* vsSrc, const char* fsSrc);
     static Shader basicColor(); // いまの三角用
     static Shader vertexColor();
+    static Shader vertexColorOffset();
 
     void use() const;
     GLuint id() const { return program; }
+    void setVec2(const char* name, float x, float y) const;
 
 private:
     static GLuint compile(GLenum type, const char* src);

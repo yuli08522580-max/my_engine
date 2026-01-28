@@ -172,6 +172,38 @@ Mesh Mesh::marioSprite(int frame) {
     return m;
 }
 
+Mesh Mesh::dotSprite(float size) {
+    Mesh m;
+    const float half = size * 0.5f;
+    const float color[3] = {1.0f, 1.0f, 1.0f};
+    float verts[] = {
+        -half,  half, color[0], color[1], color[2],
+         half,  half, color[0], color[1], color[2],
+         half, -half, color[0], color[1], color[2],
+        -half,  half, color[0], color[1], color[2],
+         half, -half, color[0], color[1], color[2],
+        -half, -half, color[0], color[1], color[2],
+    };
+    m.count = 6;
+
+    glGenVertexArrays(1, &m.vao);
+    glGenBuffers(1, &m.vbo);
+
+    glBindVertexArray(m.vao);
+    glBindBuffer(GL_ARRAY_BUFFER, m.vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(2 * sizeof(float)));
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
+    return m;
+}
+
 void Mesh::draw() const {
     glBindVertexArray(vao);
     glDrawArrays(GL_TRIANGLES, 0, count);

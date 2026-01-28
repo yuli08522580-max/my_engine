@@ -126,6 +126,37 @@ void main() {
     return fromSource(vsSrc, fsSrc);
 }
 
+Shader Shader::vertexColorOffset() {
+    const char* vsSrc = R"(
+#version 330 core
+layout(location = 0) in vec2 aPos;
+layout(location = 1) in vec3 aColor;
+uniform vec2 uOffset;
+out vec3 vColor;
+void main() {
+    vColor = aColor;
+    vec2 pos = aPos + uOffset;
+    gl_Position = vec4(pos, 0.0, 1.0);
+}
+)";
+    const char* fsSrc = R"(
+#version 330 core
+in vec3 vColor;
+out vec4 FragColor;
+void main() {
+    FragColor = vec4(vColor, 1.0);
+}
+)";
+    return fromSource(vsSrc, fsSrc);
+}
+
 void Shader::use() const {
     glUseProgram(program);
+}
+
+void Shader::setVec2(const char* name, float x, float y) const {
+    GLint location = glGetUniformLocation(program, name);
+    if (location >= 0) {
+        glUniform2f(location, x, y);
+    }
 }
