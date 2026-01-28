@@ -6,9 +6,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(my_engine
     src/main.cpp
+    src/core/Game.cpp
     src/core/Window.cpp
+    src/gfx/Renderer.cpp
     src/gfx/Shader.cpp
     src/gfx/Mesh.cpp
+    src/objects/TriangleObject.cpp
+    src/scene/Scene.cpp
 )
 
 find_package(SDL2 CONFIG REQUIRED)
