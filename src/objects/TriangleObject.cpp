@@ -4,8 +4,8 @@
 #include <cmath>
 
 TriangleObject::TriangleObject()
-: mesh(Mesh::createTriangle()),
-  shader(Shader::fromBasicColor())
+: mesh(Mesh::triangle2D()),
+  shader(Shader::basicColor())
 {}
 
 void TriangleObject::update(float dt) {
