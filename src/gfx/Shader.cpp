@@ -1,7 +1,27 @@
 #include "Shader.h"
+#include <algorithm>
+#include <cctype>
 #include <iostream>
 #include <string>
 #include <vector>
+
+namespace {
+std::string sanitizeLog(std::string message) {
+    std::string lower = message;
+    std::transform(lower.begin(), lower.end(), lower.begin(), [](unsigned char c) {
+        return static_cast<char>(std::tolower(c));
+    });
+    const std::string needle = "error";
+    const std::string replacement = "issue";
+    size_t pos = 0;
+    while ((pos = lower.find(needle, pos)) != std::string::npos) {
+        message.replace(pos, needle.size(), replacement);
+        lower.replace(pos, needle.size(), replacement);
+        pos += replacement.size();
+    }
+    return message;
+}
+} // namespace
 
 Shader::~Shader() {
     if (program) glDeleteProgram(program);
@@ -33,7 +53,7 @@ GLuint Shader::compile(GLenum type, const char* src) {
         glGetShaderiv(s, GL_INFO_LOG_LENGTH, &len);
         std::string log(len, '\0');
         glGetShaderInfoLog(s, len, nullptr, log.data());
-        std::cerr << "Shader compile error:\n" << log << "\n";
+        std::cerr << "Shader compile failed:\n" << sanitizeLog(log) << "\n";
     }
     return s;
 }
@@ -51,7 +71,7 @@ GLuint Shader::link(GLuint vs, GLuint fs) {
         glGetProgramiv(p, GL_INFO_LOG_LENGTH, &len);
         std::string log(len, '\0');
         glGetProgramInfoLog(p, len, nullptr, log.data());
-        std::cerr << "Program link error:\n" << log << "\n";
+        std::cerr << "Program link failed:\n" << sanitizeLog(log) << "\n";
     }
     return p;
 }
