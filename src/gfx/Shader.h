@@ -14,6 +14,7 @@ public:
 
     static Shader fromSource(const char* vsSrc, const char* fsSrc);
     static Shader basicColor(); // いまの三角用
+    static Shader vertexColor();
 
     void use() const;
     GLuint id() const { return program; }

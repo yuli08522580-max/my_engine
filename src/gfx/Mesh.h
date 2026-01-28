@@ -13,6 +13,8 @@ public:
     Mesh& operator=(Mesh&& other) noexcept;
 
     static Mesh triangle2D();
+    static Mesh marioSprite();
+    static Mesh marioSprite(int frame);
     void draw() const;
 
 private:
