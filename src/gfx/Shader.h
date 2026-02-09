@@ -19,13 +19,16 @@ public:
 
     // 頂点・フラグメントシェーダー文字列からプログラムを生成する。
     static Shader fromSource(const char* vsSrc, const char* fsSrc);
-    // 三角形描画用の基本色シェーダーを生成する。
-    static Shader basicColor();
+        // 三角形描画用の基本色シェーダーを生成する。
+    static Shader basicColor(); // いまの三角用
+    static Shader vertexColor();
+    static Shader vertexColorOffset();
 
     // このシェーダープログラムを現在の描画状態にバインドする。
     void use() const;
     // 内部のOpenGLプログラムIDを返す。
     GLuint id() const { return program; }
+    void setVec2(const char* name, float x, float y) const;
 
 private:
     // 指定タイプのシェーダーをコンパイルする。

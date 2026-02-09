@@ -1,7 +1,7 @@
 // core/Game.cpp
 #include "Game.h"
 #include "Window.h"
-#include "../objects/TriangleObject.h"
+#include "../objects/DotObject.h"
 #include <glad/glad.h>
 #include <memory>
 
@@ -9,7 +9,7 @@ Game::Game(Window& window)
 : window(window) {}
 
 void Game::Initialize() {
-    scene.add(std::make_unique<TriangleObject>());
+    scene.add(std::make_unique<DotObject>());
 }
 
 void Game::Update(float dt) {

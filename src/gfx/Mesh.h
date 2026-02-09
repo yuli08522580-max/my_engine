@@ -20,6 +20,10 @@ public:
     // 2D三角形メッシュを生成して返す。
     static Mesh triangle2D();
     // このメッシュを現在のコンテキストに描画する。
+    static Mesh marioSprite();
+    static Mesh marioSprite(int frame);
+    static Mesh dotSprite(float size = 0.05f);
+    static Mesh coloredQuad(float size, float r, float g, float b);
     void draw() const;
 
 private:
