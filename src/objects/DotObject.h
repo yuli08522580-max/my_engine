@@ -4,8 +4,6 @@
 #include "../gfx/Shader.h"
 #include "BlockPlacement.h"
 #include <vector>
-#include "BlockPlacement.h"
-#include <vector>
 
 // プレイヤーが操作する白いドットと配置済みブロックを管理・描画するオブジェクト。
 class DotObject : public GameObject {
@@ -21,10 +19,6 @@ private:
     static constexpr float blockSnap = 0.1f;
     static constexpr float placeInterval = 0.15f;
 
-    static constexpr float blockSize = 0.1f;
-    static constexpr float blockSnap = 0.1f;
-    static constexpr float placeInterval = 0.15f;
-
     float x = 0.0f;
     float y = 0.0f;
     float placeCooldown = 0.0f;
@@ -32,8 +26,6 @@ private:
     std::vector<block_placement::BlockPos> blocks;
     Mesh mesh;
     Shader shader;
-    Mesh blockMesh;
-    Shader blockShader;
     Mesh blockMesh;
     Shader blockShader;
 };
