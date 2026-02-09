@@ -8,6 +8,9 @@ DotObject::DotObject()
   shader(Shader::vertexColorOffset()),
   blockMesh(Mesh::coloredQuad(blockSize, 0.55f, 0.35f, 0.15f)),
   blockShader(Shader::vertexColorOffset())
+  shader(Shader::vertexColorOffset()),
+  blockMesh(Mesh::coloredQuad(blockSize, 0.55f, 0.35f, 0.15f)),
+  blockShader(Shader::vertexColorOffset())
 {}
 
 void DotObject::update(float dt) {
