@@ -10,6 +10,14 @@ project(my_engine LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+enable_testing()
+
+add_executable(block_placement_tests
+    tests/block_placement_tests.cpp
+    src/objects/BlockPlacement.cpp
+)
+add_test(NAME block_placement_tests COMMAND block_placement_tests)
+
 find_package(SDL2 CONFIG QUIET)
 find_package(glad CONFIG QUIET)
 find_package(glm CONFIG QUIET)
@@ -28,6 +36,7 @@ if(MY_ENGINE_BUILD)
         src/gfx/Renderer.cpp
         src/gfx/Shader.cpp
         src/gfx/Mesh.cpp
+        src/objects/BlockPlacement.cpp
         src/objects/DotObject.cpp
         src/objects/MarioObject.cpp
         src/objects/TriangleObject.cpp

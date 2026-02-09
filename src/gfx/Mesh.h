@@ -16,6 +16,7 @@ public:
     static Mesh marioSprite();
     static Mesh marioSprite(int frame);
     static Mesh dotSprite(float size = 0.05f);
+    static Mesh coloredQuad(float size, float r, float g, float b);
     void draw() const;
 
 private:
