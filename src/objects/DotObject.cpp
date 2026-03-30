@@ -39,18 +39,27 @@ void DotObject::update(float dt) {
 
     float dx = 0.0f;
     float dy = 0.0f;
-    if (keys[SDL_SCANCODE_W]) dy += 1.0f;
-    if (keys[SDL_SCANCODE_S]) dy -= 1.0f;
     if (keys[SDL_SCANCODE_D]) dx += 1.0f;
     if (keys[SDL_SCANCODE_A]) dx -= 1.0f;
 
     const float speed = 0.6f;
-    const collision2d::Vec2 delta{dx * speed * dt, dy * speed * dt};
+    if (stageEditMode) {
+        if (keys[SDL_SCANCODE_W]) dy += 1.0f;
+        if (keys[SDL_SCANCODE_S]) dy -= 1.0f;
+        velocityY = 0.0f;
+    } else {
+        velocityY -= gravityAcceleration * dt;
+        velocityY = std::max(velocityY, -maxFallSpeed);
+        dy = velocityY;
+    }
+
+    const collision2d::Vec2 delta{dx * speed * dt, dy * dt};
 
     if (stageEditMode) {
         x += delta.x;
         y += delta.y;
     } else {
+        const float expectedY = y + delta.y;
         const collision2d::AABBCollisionResolver resolver(buildStageColliders(blocks, blockSize));
         const collision2d::Vec2 resolved = resolver.resolveMovement(
             {x, y},
@@ -59,11 +68,18 @@ void DotObject::update(float dt) {
         );
         x = resolved.x;
         y = resolved.y;
+        if ((velocityY < 0.0f && y > expectedY) || (velocityY > 0.0f && y < expectedY)) {
+            velocityY = 0.0f;
+        }
     }
 
     // 画面端の少し内側に移動範囲を制限する。
     x = std::clamp(x, -0.95f, 0.95f);
-    y = std::clamp(y, -0.95f, 0.95f);
+    const float clampedY = std::clamp(y, -0.95f, 0.95f);
+    if (!stageEditMode && clampedY != y && velocityY < 0.0f) {
+        velocityY = 0.0f;
+    }
+    y = clampedY;
 
     // ステージ編集モード中のみ、ブロックの配置と削除を許可する。
     if (stageEditMode) {
