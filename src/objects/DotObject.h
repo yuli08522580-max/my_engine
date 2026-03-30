@@ -32,11 +32,15 @@ private:
     // モードインジケータ表示位置(Y)。
     static constexpr float modeIndicatorY = 0.92f;
     // 落下速度の上限。
-    static constexpr float maxFallSpeed = 1.4f;
+    static constexpr float maxFallSpeed = 2.2f;
     // 重力調整時の増減ステップ。
     static constexpr float gravityAdjustStep = 0.1f;
     // ジャンプ力調整時の増減ステップ。
     static constexpr float jumpAdjustStep = 0.05f;
+    // ジャンプ開始位置からの最高到達高さ。
+    static constexpr float jumpApexHeight = 0.28f;
+    // 最高到達点で静止する時間[s]。
+    static constexpr float jumpApexHangDuration = 0.12f;
 
     // プレイヤー中心位置(X)。
     float x = 0.0f;
@@ -56,6 +60,16 @@ private:
     bool grounded = false;
     // ジャンプキーの前フレーム押下状態。
     bool jumpKeyWasDown = false;
+    // 現在ジャンプ遷移中かどうか。
+    bool jumpInProgress = false;
+    // 最高到達点で静止中かどうか。
+    bool apexHangActive = false;
+    // ジャンプ開始時のY座標。
+    float jumpStartY = 0.0f;
+    // 今回ジャンプで目指す最高到達Y座標。
+    float jumpApexY = 0.0f;
+    // 最高到達点での経過静止時間[s]。
+    float apexHangTimer = 0.0f;
     // 重力増加キーの前フレーム押下状態。
     bool increaseGravityKeyWasDown = false;
     // 重力減少キーの前フレーム押下状態。

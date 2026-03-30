@@ -74,14 +74,33 @@ void DotObject::update(float dt) {
         if (keys[SDL_SCANCODE_S]) dy -= 1.0f;
         velocityY = 0.0f;
         grounded = false;
+        jumpInProgress = false;
+        apexHangActive = false;
+        apexHangTimer = 0.0f;
     } else {
         if (jumpPressed && !jumpKeyWasDown && grounded) {
             velocityY = physicsTuning.jump();
             grounded = false;
+            jumpInProgress = true;
+            apexHangActive = false;
+            apexHangTimer = 0.0f;
+            jumpStartY = y;
+            jumpApexY = std::min(jumpStartY + jumpApexHeight, 0.95f);
         }
-        velocityY -= physicsTuning.gravity() * dt;
-        velocityY = std::max(velocityY, -maxFallSpeed);
-        dy = velocityY;
+
+        if (apexHangActive) {
+            velocityY = 0.0f;
+            dy = 0.0f;
+            apexHangTimer += dt;
+            if (apexHangTimer >= jumpApexHangDuration) {
+                apexHangActive = false;
+                jumpInProgress = false;
+            }
+        } else {
+            velocityY -= physicsTuning.gravity() * dt;
+            velocityY = std::max(velocityY, -maxFallSpeed);
+            dy = velocityY;
+        }
     }
     jumpKeyWasDown = jumpPressed;
 
@@ -103,8 +122,18 @@ void DotObject::update(float dt) {
         if ((velocityY < 0.0f && y > expectedY) || (velocityY > 0.0f && y < expectedY)) {
             if (velocityY < 0.0f && y > expectedY) {
                 grounded = true;
+                jumpInProgress = false;
+                apexHangActive = false;
+                apexHangTimer = 0.0f;
             }
             velocityY = 0.0f;
+        }
+
+        if (jumpInProgress && !apexHangActive && y >= jumpApexY) {
+            y = jumpApexY;
+            velocityY = 0.0f;
+            apexHangActive = true;
+            apexHangTimer = 0.0f;
         }
     }
 
@@ -114,6 +143,9 @@ void DotObject::update(float dt) {
     if (!stageEditMode && clampedY != y && velocityY < 0.0f) {
         grounded = true;
         velocityY = 0.0f;
+        jumpInProgress = false;
+        apexHangActive = false;
+        apexHangTimer = 0.0f;
     }
     y = clampedY;
 
