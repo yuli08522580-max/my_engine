@@ -63,27 +63,38 @@ void DotObject::update(float dt) {
     increaseJumpKeyWasDown = increaseJumpPressed;
     decreaseJumpKeyWasDown = decreaseJumpPressed;
 
-    float dx = 0.0f;
+    float horizontalVelocity = 0.0f;
     float dy = 0.0f;
-    if (keys[SDL_SCANCODE_D]) dx += 1.0f;
-    if (keys[SDL_SCANCODE_A]) dx -= 1.0f;
+    if (keys[SDL_SCANCODE_D]) horizontalVelocity += 1.0f;
+    if (keys[SDL_SCANCODE_A]) horizontalVelocity -= 1.0f;
 
     const float speed = 0.6f;
     if (stageEditMode) {
         if (keys[SDL_SCANCODE_W]) dy += 1.0f;
         if (keys[SDL_SCANCODE_S]) dy -= 1.0f;
         velocityY = 0.0f;
+        wallJumpVelocityX = 0.0f;
+        wallJumpBoostTimer = 0.0f;
+        touchingWallLeft = false;
+        touchingWallRight = false;
         grounded = false;
         jumpCount = 0;
         jumpInProgress = false;
         apexHangActive = false;
         apexHangTimer = 0.0f;
     } else {
-        const bool canStartJump = grounded || jumpCount < maxJumpCount;
+        const bool canWallJump = !grounded && (touchingWallLeft || touchingWallRight);
+        const bool canStartJump = grounded || jumpCount < maxJumpCount || canWallJump;
         if (jumpPressed && !jumpKeyWasDown && canStartJump) {
             velocityY = physicsTuning.jump();
             grounded = false;
-            jumpCount += 1;
+            if (canWallJump) {
+                wallJumpVelocityX = touchingWallLeft ? wallJumpHorizontalSpeed : -wallJumpHorizontalSpeed;
+                wallJumpBoostTimer = wallJumpBoostDuration;
+                jumpCount = 1;
+            } else {
+                jumpCount += 1;
+            }
             jumpInProgress = true;
             apexHangActive = false;
             apexHangTimer = 0.0f;
@@ -104,15 +115,29 @@ void DotObject::update(float dt) {
             velocityY = std::max(velocityY, -maxFallSpeed);
             dy = velocityY;
         }
+
+        horizontalVelocity *= speed;
+        if (wallJumpBoostTimer > 0.0f) {
+            horizontalVelocity += wallJumpVelocityX;
+            wallJumpBoostTimer = std::max(0.0f, wallJumpBoostTimer - dt);
+            if (wallJumpBoostTimer <= 0.0f) {
+                wallJumpVelocityX = 0.0f;
+            }
+        }
+    }
+
+    if (stageEditMode) {
+        horizontalVelocity *= speed;
     }
     jumpKeyWasDown = jumpPressed;
 
-    const collision2d::Vec2 delta{dx * speed * dt, dy * dt};
+    const collision2d::Vec2 delta{horizontalVelocity * dt, dy * dt};
 
     if (stageEditMode) {
         x += delta.x;
         y += delta.y;
     } else {
+        const float expectedX = x + delta.x;
         const float expectedY = y + delta.y;
         const collision2d::AABBCollisionResolver resolver(buildStageColliders(blocks, blockSize));
         const collision2d::Vec2 resolved = resolver.resolveMovement(
@@ -122,6 +147,13 @@ void DotObject::update(float dt) {
         );
         x = resolved.x;
         y = resolved.y;
+        touchingWallLeft = false;
+        touchingWallRight = false;
+        if (delta.x < 0.0f && x > expectedX) {
+            touchingWallLeft = true;
+        } else if (delta.x > 0.0f && x < expectedX) {
+            touchingWallRight = true;
+        }
         if ((velocityY < 0.0f && y > expectedY) || (velocityY > 0.0f && y < expectedY)) {
             if (velocityY < 0.0f && y > expectedY) {
                 grounded = true;

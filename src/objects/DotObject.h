@@ -43,6 +43,10 @@ private:
     static constexpr float jumpApexHeight = 0.28f;
     // 最高到達点で静止する時間[s]。
     static constexpr float jumpApexHangDuration = 0.12f;
+    // 壁ジャンプ時に付与する水平方向速度。
+    static constexpr float wallJumpHorizontalSpeed = 1.1f;
+    // 壁ジャンプ時の水平加速を維持する時間[s]。
+    static constexpr float wallJumpBoostDuration = 0.1f;
 
     // プレイヤー中心位置(X)。
     float x = 0.0f;
@@ -82,6 +86,14 @@ private:
     bool increaseJumpKeyWasDown = false;
     // ジャンプ力減少キーの前フレーム押下状態。
     bool decreaseJumpKeyWasDown = false;
+    // 左側の壁に接触しているか。
+    bool touchingWallLeft = false;
+    // 右側の壁に接触しているか。
+    bool touchingWallRight = false;
+    // 壁ジャンプの水平速度。
+    float wallJumpVelocityX = 0.0f;
+    // 壁ジャンプの水平速度を維持する残り時間[s]。
+    float wallJumpBoostTimer = 0.0f;
     // 現在配置されているブロック一覧。
     std::vector<block_placement::BlockPos> blocks;
     // 重力・ジャンプ力の動的チューニング値。
