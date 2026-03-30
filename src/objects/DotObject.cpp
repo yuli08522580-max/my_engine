@@ -33,10 +33,35 @@ void DotObject::update(float dt) {
     const Uint8* keys = SDL_GetKeyboardState(nullptr);
     const bool toggleModePressed = keys[SDL_SCANCODE_TAB];
     const bool jumpPressed = keys[SDL_SCANCODE_SPACE];
+    const bool increaseGravityPressed = keys[SDL_SCANCODE_RIGHTBRACKET];
+    const bool decreaseGravityPressed = keys[SDL_SCANCODE_LEFTBRACKET];
+    const bool increaseJumpPressed = keys[SDL_SCANCODE_EQUALS];
+    const bool decreaseJumpPressed = keys[SDL_SCANCODE_MINUS];
     if (toggleModePressed && !toggleModeKeyWasDown) {
         stageEditMode = !stageEditMode;
     }
     toggleModeKeyWasDown = toggleModePressed;
+
+    if (increaseGravityPressed && !increaseGravityKeyWasDown) {
+        physicsTuning.adjustGravity(gravityAdjustStep);
+        SDL_Log("Gravity acceleration: %.2f", physicsTuning.gravity());
+    }
+    if (decreaseGravityPressed && !decreaseGravityKeyWasDown) {
+        physicsTuning.adjustGravity(-gravityAdjustStep);
+        SDL_Log("Gravity acceleration: %.2f", physicsTuning.gravity());
+    }
+    if (increaseJumpPressed && !increaseJumpKeyWasDown) {
+        physicsTuning.adjustJump(jumpAdjustStep);
+        SDL_Log("Jump velocity: %.2f", physicsTuning.jump());
+    }
+    if (decreaseJumpPressed && !decreaseJumpKeyWasDown) {
+        physicsTuning.adjustJump(-jumpAdjustStep);
+        SDL_Log("Jump velocity: %.2f", physicsTuning.jump());
+    }
+    increaseGravityKeyWasDown = increaseGravityPressed;
+    decreaseGravityKeyWasDown = decreaseGravityPressed;
+    increaseJumpKeyWasDown = increaseJumpPressed;
+    decreaseJumpKeyWasDown = decreaseJumpPressed;
 
     float dx = 0.0f;
     float dy = 0.0f;
@@ -51,10 +76,10 @@ void DotObject::update(float dt) {
         grounded = false;
     } else {
         if (jumpPressed && !jumpKeyWasDown && grounded) {
-            velocityY = jumpVelocity;
+            velocityY = physicsTuning.jump();
             grounded = false;
         }
-        velocityY -= gravityAcceleration * dt;
+        velocityY -= physicsTuning.gravity() * dt;
         velocityY = std::max(velocityY, -maxFallSpeed);
         dy = velocityY;
     }
