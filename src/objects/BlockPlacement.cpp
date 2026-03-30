@@ -15,6 +15,7 @@ bool hasBlockAt(const std::vector<BlockPos>& blocks, float x, float y, float eps
 }
 
 bool tryPlaceBlock(std::vector<BlockPos>& blocks, float x, float y, float snap, float eps) {
+    // 入力座標をグリッド上へスナップしてから重複判定を行う。
     const float snappedX = snapToGrid(x, snap);
     const float snappedY = snapToGrid(y, snap);
 
@@ -23,6 +24,22 @@ bool tryPlaceBlock(std::vector<BlockPos>& blocks, float x, float y, float snap, 
     }
 
     blocks.push_back({snappedX, snappedY});
+    return true;
+}
+
+bool tryRemoveBlock(std::vector<BlockPos>& blocks, float x, float y, float snap, float eps) {
+    const float snappedX = snapToGrid(x, snap);
+    const float snappedY = snapToGrid(y, snap);
+
+    const auto it = std::find_if(blocks.begin(), blocks.end(), [&](const BlockPos& block) {
+        return std::abs(block.x - snappedX) < eps && std::abs(block.y - snappedY) < eps;
+    });
+
+    if (it == blocks.end()) {
+        return false;
+    }
+
+    blocks.erase(it);
     return true;
 }
 
