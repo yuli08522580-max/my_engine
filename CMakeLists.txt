@@ -24,6 +24,12 @@ add_executable(collision2d_tests
 )
 add_test(NAME collision2d_tests COMMAND collision2d_tests)
 
+add_executable(player_physics_tuning_tests
+    tests/player_physics_tuning_tests.cpp
+    src/objects/PlayerPhysicsTuning.cpp
+)
+add_test(NAME player_physics_tuning_tests COMMAND player_physics_tuning_tests)
+
 find_package(SDL2 CONFIG QUIET)
 find_package(glad CONFIG QUIET)
 find_package(glm CONFIG QUIET)
@@ -45,6 +51,7 @@ if(MY_ENGINE_BUILD)
         src/objects/BlockPlacement.cpp
         src/physics/Collision2D.cpp
         src/objects/DotObject.cpp
+        src/objects/PlayerPhysicsTuning.cpp
         src/objects/MarioObject.cpp
         src/objects/TriangleObject.cpp
         src/scene/Scene.cpp

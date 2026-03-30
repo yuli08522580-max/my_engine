@@ -4,6 +4,7 @@
 #include "../gfx/Shader.h"
 #include "../physics/Collision2D.h"
 #include "BlockPlacement.h"
+#include "PlayerPhysicsTuning.h"
 #include <vector>
 
 // プレイヤーが操作する白いドットと配置済みブロックを管理・描画するオブジェクト。
@@ -23,9 +24,9 @@ private:
     static constexpr float modeIndicatorSize = 0.05f;
     static constexpr float modeIndicatorX = -0.92f;
     static constexpr float modeIndicatorY = 0.92f;
-    static constexpr float gravityAcceleration = 1.8f;
     static constexpr float maxFallSpeed = 1.4f;
-    static constexpr float jumpVelocity = 0.85f;
+    static constexpr float gravityAdjustStep = 0.1f;
+    static constexpr float jumpAdjustStep = 0.05f;
 
     float x = 0.0f;
     float y = 0.0f;
@@ -36,7 +37,12 @@ private:
     float velocityY = 0.0f;
     bool grounded = false;
     bool jumpKeyWasDown = false;
+    bool increaseGravityKeyWasDown = false;
+    bool decreaseGravityKeyWasDown = false;
+    bool increaseJumpKeyWasDown = false;
+    bool decreaseJumpKeyWasDown = false;
     std::vector<block_placement::BlockPos> blocks;
+    PlayerPhysicsTuning physicsTuning;
     Mesh mesh;
     Shader shader;
     Mesh blockMesh;
