@@ -22,8 +22,12 @@ int main() {
     bool ok = true;
 
     PlayerPhysicsTuning tuning;
+    const float initialGravity = tuning.gravity();
     tuning.adjustGravity(0.2f);
-    ok &= expect(nearlyEqual(tuning.gravity(), 2.0f), "gravity should increase by delta");
+    ok &= expect(
+        nearlyEqual(tuning.gravity(), initialGravity + 0.2f),
+        "gravity should increase by delta"
+    );
 
     tuning.adjustGravity(10.0f);
     ok &= expect(

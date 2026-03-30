@@ -9,8 +9,8 @@ public:
     static constexpr float maxJumpVelocity = 2.0f;
 
     explicit PlayerPhysicsTuning(
-        float gravityAcceleration = 1.8f,
-        float jumpVelocity = 0.85f
+        float gravityAcceleration = 2.6f,
+        float jumpVelocity = 1.05f
     );
 
     float gravity() const;
