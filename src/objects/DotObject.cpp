@@ -74,13 +74,16 @@ void DotObject::update(float dt) {
         if (keys[SDL_SCANCODE_S]) dy -= 1.0f;
         velocityY = 0.0f;
         grounded = false;
+        jumpCount = 0;
         jumpInProgress = false;
         apexHangActive = false;
         apexHangTimer = 0.0f;
     } else {
-        if (jumpPressed && !jumpKeyWasDown && grounded) {
+        const bool canStartJump = grounded || jumpCount < maxJumpCount;
+        if (jumpPressed && !jumpKeyWasDown && canStartJump) {
             velocityY = physicsTuning.jump();
             grounded = false;
+            jumpCount += 1;
             jumpInProgress = true;
             apexHangActive = false;
             apexHangTimer = 0.0f;
@@ -122,6 +125,7 @@ void DotObject::update(float dt) {
         if ((velocityY < 0.0f && y > expectedY) || (velocityY > 0.0f && y < expectedY)) {
             if (velocityY < 0.0f && y > expectedY) {
                 grounded = true;
+                jumpCount = 0;
                 jumpInProgress = false;
                 apexHangActive = false;
                 apexHangTimer = 0.0f;
@@ -142,6 +146,7 @@ void DotObject::update(float dt) {
     const float clampedY = std::clamp(y, -0.95f, 0.95f);
     if (!stageEditMode && clampedY != y && velocityY < 0.0f) {
         grounded = true;
+        jumpCount = 0;
         velocityY = 0.0f;
         jumpInProgress = false;
         apexHangActive = false;
