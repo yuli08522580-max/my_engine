@@ -18,6 +18,12 @@ add_executable(block_placement_tests
 )
 add_test(NAME block_placement_tests COMMAND block_placement_tests)
 
+add_executable(collision2d_tests
+    tests/collision2d_tests.cpp
+    src/physics/Collision2D.cpp
+)
+add_test(NAME collision2d_tests COMMAND collision2d_tests)
+
 find_package(SDL2 CONFIG QUIET)
 find_package(glad CONFIG QUIET)
 find_package(glm CONFIG QUIET)
@@ -37,6 +43,7 @@ if(MY_ENGINE_BUILD)
         src/gfx/Shader.cpp
         src/gfx/Mesh.cpp
         src/objects/BlockPlacement.cpp
+        src/physics/Collision2D.cpp
         src/objects/DotObject.cpp
         src/objects/MarioObject.cpp
         src/objects/TriangleObject.cpp
