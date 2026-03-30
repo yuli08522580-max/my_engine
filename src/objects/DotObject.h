@@ -23,8 +23,13 @@ private:
     static constexpr float modeIndicatorSize = 0.05f;
     static constexpr float modeIndicatorX = -0.92f;
     static constexpr float modeIndicatorY = 0.92f;
-    static constexpr float gravityAcceleration = 1.8f;
-    static constexpr float maxFallSpeed = 1.4f;
+    // ===== ジャンプ調整パラメータ =====
+    // 上方向へ押し上げる初速。大きいほど高くジャンプする。
+    float jumpVelocity = 0.85f;
+    // 下方向へ引っ張る重力加速度。大きいほど速く落下する。
+    float gravityAcceleration = 1.8f;
+    // 下方向の終端速度。大きいほど落下の最高速度が上がる。
+    float maxFallSpeed = 1.4f;
 
     float x = 0.0f;
     float y = 0.0f;
@@ -33,6 +38,8 @@ private:
     float placeCooldown = 0.0f;
     float removeCooldown = 0.0f;
     float velocityY = 0.0f;
+    bool grounded = false;
+    bool jumpKeyWasDown = false;
     std::vector<block_placement::BlockPos> blocks;
     Mesh mesh;
     Shader shader;
