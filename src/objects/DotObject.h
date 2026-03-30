@@ -2,6 +2,7 @@
 #include "../scene/GameObject.h"
 #include "../gfx/Mesh.h"
 #include "../gfx/Shader.h"
+#include "../physics/Collision2D.h"
 #include "BlockPlacement.h"
 #include <vector>
 
@@ -16,6 +17,7 @@ public:
 
 private:
     static constexpr float blockSize = 0.1f;
+    static constexpr float playerSize = 0.05f;
     static constexpr float blockSnap = 0.1f;
     static constexpr float placeInterval = 0.15f;
 
