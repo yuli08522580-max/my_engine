@@ -3,8 +3,24 @@
 #include <SDL.h>
 #include <algorithm>
 
+namespace {
+std::vector<collision2d::AABB> buildStageColliders(
+    const std::vector<block_placement::BlockPos>& blocks,
+    float blockSize
+) {
+    std::vector<collision2d::AABB> colliders;
+    colliders.reserve(blocks.size());
+
+    const float half = blockSize * 0.5f;
+    for (const auto& block : blocks) {
+        colliders.push_back({block.x, block.y, half, half});
+    }
+    return colliders;
+}
+}
+
 DotObject::DotObject()
-: mesh(Mesh::dotSprite()),
+: mesh(Mesh::dotSprite(playerSize)),
   shader(Shader::vertexColorOffset()),
   blockMesh(Mesh::coloredQuad(blockSize, 0.55f, 0.35f, 0.15f)),
   blockShader(Shader::vertexColorOffset())
@@ -19,9 +35,28 @@ void DotObject::update(float dt) {
     if (keys[SDL_SCANCODE_D]) dx += 1.0f;
     if (keys[SDL_SCANCODE_A]) dx -= 1.0f;
 
+    const bool modeTogglePressed = keys[SDL_SCANCODE_C];
+    if (modeTogglePressed && !modeTogglePressedLastFrame) {
+        collisionDisabledMode = !collisionDisabledMode;
+    }
+    modeTogglePressedLastFrame = modeTogglePressed;
+
     const float speed = 0.6f;
-    x += dx * speed * dt;
-    y += dy * speed * dt;
+    const collision2d::Vec2 delta{dx * speed * dt, dy * speed * dt};
+
+    if (collisionDisabledMode) {
+        x += delta.x;
+        y += delta.y;
+    } else {
+        const collision2d::AABBCollisionResolver resolver(buildStageColliders(blocks, blockSize));
+        const collision2d::Vec2 resolved = resolver.resolveMovement(
+            {x, y},
+            delta,
+            {playerSize * 0.5f, playerSize * 0.5f}
+        );
+        x = resolved.x;
+        y = resolved.y;
+    }
 
     // 画面端の少し内側に移動範囲を制限する。
     x = std::clamp(x, -0.95f, 0.95f);
