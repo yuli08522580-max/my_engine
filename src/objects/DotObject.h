@@ -23,8 +23,6 @@ private:
 
     float x = 0.0f;
     float y = 0.0f;
-    bool stageEditMode = false;
-    bool toggleModeKeyWasDown = false;
     float placeCooldown = 0.0f;
     float removeCooldown = 0.0f;
     std::vector<block_placement::BlockPos> blocks;
