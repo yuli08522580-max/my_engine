@@ -20,9 +20,14 @@ private:
     static constexpr float playerSize = 0.05f;
     static constexpr float blockSnap = 0.1f;
     static constexpr float placeInterval = 0.15f;
+    static constexpr float modeIndicatorSize = 0.05f;
+    static constexpr float modeIndicatorX = -0.92f;
+    static constexpr float modeIndicatorY = 0.92f;
 
     float x = 0.0f;
     float y = 0.0f;
+    bool stageEditMode = false;
+    bool toggleModeKeyWasDown = false;
     float placeCooldown = 0.0f;
     float removeCooldown = 0.0f;
     std::vector<block_placement::BlockPos> blocks;
@@ -30,4 +35,7 @@ private:
     Shader shader;
     Mesh blockMesh;
     Shader blockShader;
+    Mesh playModeIndicatorMesh;
+    Mesh editModeIndicatorMesh;
+    Shader modeIndicatorShader;
 };
