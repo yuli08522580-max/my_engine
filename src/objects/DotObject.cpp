@@ -32,6 +32,7 @@ DotObject::DotObject()
 void DotObject::update(float dt) {
     const Uint8* keys = SDL_GetKeyboardState(nullptr);
     const bool toggleModePressed = keys[SDL_SCANCODE_TAB];
+    const bool jumpPressed = keys[SDL_SCANCODE_SPACE];
     if (toggleModePressed && !toggleModeKeyWasDown) {
         stageEditMode = !stageEditMode;
     }
@@ -47,11 +48,17 @@ void DotObject::update(float dt) {
         if (keys[SDL_SCANCODE_W]) dy += 1.0f;
         if (keys[SDL_SCANCODE_S]) dy -= 1.0f;
         velocityY = 0.0f;
+        grounded = false;
     } else {
+        if (jumpPressed && !jumpKeyWasDown && grounded) {
+            velocityY = jumpVelocity;
+            grounded = false;
+        }
         velocityY -= gravityAcceleration * dt;
         velocityY = std::max(velocityY, -maxFallSpeed);
         dy = velocityY;
     }
+    jumpKeyWasDown = jumpPressed;
 
     const collision2d::Vec2 delta{dx * speed * dt, dy * dt};
 
@@ -69,6 +76,9 @@ void DotObject::update(float dt) {
         x = resolved.x;
         y = resolved.y;
         if ((velocityY < 0.0f && y > expectedY) || (velocityY > 0.0f && y < expectedY)) {
+            if (velocityY < 0.0f && y > expectedY) {
+                grounded = true;
+            }
             velocityY = 0.0f;
         }
     }
@@ -77,6 +87,7 @@ void DotObject::update(float dt) {
     x = std::clamp(x, -0.95f, 0.95f);
     const float clampedY = std::clamp(y, -0.95f, 0.95f);
     if (!stageEditMode && clampedY != y && velocityY < 0.0f) {
+        grounded = true;
         velocityY = 0.0f;
     }
     y = clampedY;
@@ -85,7 +96,7 @@ void DotObject::update(float dt) {
     if (stageEditMode) {
         // 長押し時の過剰配置を防ぐため、配置間隔をクールダウンで制御する。
         placeCooldown = std::max(0.0f, placeCooldown - dt);
-        const bool placePressed = keys[SDL_SCANCODE_SPACE];
+        const bool placePressed = jumpPressed;
         if (placePressed && placeCooldown <= 0.0f) {
             block_placement::tryPlaceBlock(blocks, x, y, blockSnap);
             placeCooldown = placeInterval;

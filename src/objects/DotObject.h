@@ -25,6 +25,7 @@ private:
     static constexpr float modeIndicatorY = 0.92f;
     static constexpr float gravityAcceleration = 1.8f;
     static constexpr float maxFallSpeed = 1.4f;
+    static constexpr float jumpVelocity = 0.85f;
 
     float x = 0.0f;
     float y = 0.0f;
@@ -33,6 +34,8 @@ private:
     float placeCooldown = 0.0f;
     float removeCooldown = 0.0f;
     float velocityY = 0.0f;
+    bool grounded = false;
+    bool jumpKeyWasDown = false;
     std::vector<block_placement::BlockPos> blocks;
     Mesh mesh;
     Shader shader;
