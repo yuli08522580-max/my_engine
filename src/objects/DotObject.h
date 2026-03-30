@@ -37,6 +37,8 @@ private:
     static constexpr float gravityAdjustStep = 0.1f;
     // ジャンプ力調整時の増減ステップ。
     static constexpr float jumpAdjustStep = 0.05f;
+    // 空中で実行できるジャンプを含む最大ジャンプ回数。
+    static constexpr int maxJumpCount = 2;
     // ジャンプ開始位置からの最高到達高さ。
     static constexpr float jumpApexHeight = 0.28f;
     // 最高到達点で静止する時間[s]。
@@ -60,6 +62,8 @@ private:
     bool grounded = false;
     // ジャンプキーの前フレーム押下状態。
     bool jumpKeyWasDown = false;
+    // 現在の滞空中に実行したジャンプ回数。
+    int jumpCount = 0;
     // 現在ジャンプ遷移中かどうか。
     bool jumpInProgress = false;
     // 最高到達点で静止中かどうか。
