@@ -35,11 +35,8 @@ void DotObject::update(float dt) {
     if (keys[SDL_SCANCODE_D]) dx += 1.0f;
     if (keys[SDL_SCANCODE_A]) dx -= 1.0f;
 
-    const bool modeTogglePressed = keys[SDL_SCANCODE_C];
-    if (modeTogglePressed && !modeTogglePressedLastFrame) {
-        collisionDisabledMode = !collisionDisabledMode;
-    }
-    modeTogglePressedLastFrame = modeTogglePressed;
+    // Cキー押下中は当たり判定を無効化し、設置済みブロック内部に入って削除しやすくする。
+    const bool collisionDisabledMode = keys[SDL_SCANCODE_C];
 
     const float speed = 0.6f;
     const collision2d::Vec2 delta{dx * speed * dt, dy * speed * dt};

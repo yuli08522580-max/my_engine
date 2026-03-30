@@ -21,8 +21,6 @@ private:
     static constexpr float blockSnap = 0.1f;
     static constexpr float placeInterval = 0.15f;
 
-    bool collisionDisabledMode = false;
-    bool modeTogglePressedLastFrame = false;
 
     float x = 0.0f;
     float y = 0.0f;
