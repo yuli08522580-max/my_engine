@@ -36,4 +36,11 @@ private:
     std::vector<AABB> staticColliders;
 };
 
+
+
+// 壁ジャンプ直後の短時間、壁方向への入力を抑制する補助関数。
+// wallNormalX は接触した壁の法線 X 成分（右壁なら -1、左壁なら +1）。
+// lockoutTimer が正の間は、壁方向（法線と逆向き）の入力だけ 0 にする。
+float suppressTowardWallInput(float desiredMoveX, float wallNormalX, float lockoutTimer);
+
 } // namespace collision2d

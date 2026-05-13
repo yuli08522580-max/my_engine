@@ -25,6 +25,18 @@ bool overlapsOnX(float dynamicCenterX, float dynamicHalfWidth, const AABB& obsta
 }
 } // namespace
 
+float suppressTowardWallInput(float desiredMoveX, float wallNormalX, float lockoutTimer) {
+    if (lockoutTimer <= 0.0f) {
+        return desiredMoveX;
+    }
+
+    // 法線と逆向きの入力は壁へ向かう入力。
+    if (desiredMoveX * wallNormalX < 0.0f) {
+        return 0.0f;
+    }
+    return desiredMoveX;
+}
+
 bool AABBOverlap::intersects(const AABB& a, const AABB& b) {
     const float aMinX = a.centerX - a.halfWidth;
     const float aMaxX = a.centerX + a.halfWidth;
