@@ -41,5 +41,20 @@ int main() {
         if (!nearlyEqual(resolved.x, 0.2f)) return 6;
     }
 
+
+    {
+        // 右壁（法線 -1）に触れて壁ジャンプした直後は、右入力を抑制する。
+        const float filtered = suppressTowardWallInput(1.0f, -1.0f, 0.12f);
+        if (!nearlyEqual(filtered, 0.0f)) return 7;
+
+        // 壁と逆方向（左）への入力は通す。
+        const float away = suppressTowardWallInput(-1.0f, -1.0f, 0.12f);
+        if (!nearlyEqual(away, -1.0f)) return 8;
+
+        // ロックアウト終了後は壁方向入力も通す。
+        const float afterTimer = suppressTowardWallInput(1.0f, -1.0f, 0.0f);
+        if (!nearlyEqual(afterTimer, 1.0f)) return 9;
+    }
+
     return 0;
 }
