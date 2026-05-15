@@ -47,6 +47,8 @@ private:
     static constexpr float wallJumpHorizontalSpeed = 1.1f;
     // 壁ジャンプ時の水平加速を維持する時間[s]。
     static constexpr float wallJumpBoostDuration = 0.1f;
+    // 壁ジャンプ直後に壁側入力を無効化する時間[s]。
+    static constexpr float wallJumpInputLockDuration = 0.12f;
 
     // プレイヤー中心位置(X)。
     float x = 0.0f;
@@ -94,6 +96,10 @@ private:
     float wallJumpVelocityX = 0.0f;
     // 壁ジャンプの水平速度を維持する残り時間[s]。
     float wallJumpBoostTimer = 0.0f;
+    // 壁ジャンプ直後の壁側入力を無効化する残り時間[s]。
+    float wallJumpInputLockTimer = 0.0f;
+    // 入力を無効化する方向（-1: 左, +1: 右, 0: 無効化なし）。
+    float wallJumpLockedDirectionX = 0.0f;
     // 現在配置されているブロック一覧。
     std::vector<block_placement::BlockPos> blocks;
     // 重力・ジャンプ力の動的チューニング値。

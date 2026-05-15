@@ -75,6 +75,8 @@ void DotObject::update(float dt) {
         velocityY = 0.0f;
         wallJumpVelocityX = 0.0f;
         wallJumpBoostTimer = 0.0f;
+        wallJumpInputLockTimer = 0.0f;
+        wallJumpLockedDirectionX = 0.0f;
         touchingWallLeft = false;
         touchingWallRight = false;
         grounded = false;
@@ -91,6 +93,8 @@ void DotObject::update(float dt) {
             if (canWallJump) {
                 wallJumpVelocityX = touchingWallLeft ? wallJumpHorizontalSpeed : -wallJumpHorizontalSpeed;
                 wallJumpBoostTimer = wallJumpBoostDuration;
+                wallJumpLockedDirectionX = touchingWallLeft ? -1.0f : 1.0f;
+                wallJumpInputLockTimer = wallJumpInputLockDuration;
                 jumpCount = 1;
             } else {
                 jumpCount += 1;
@@ -100,6 +104,17 @@ void DotObject::update(float dt) {
             apexHangTimer = 0.0f;
             jumpStartY = y;
             jumpApexY = std::min(jumpStartY + jumpApexHeight, 0.95f);
+        }
+
+        if (wallJumpInputLockTimer > 0.0f) {
+            if ((wallJumpLockedDirectionX < 0.0f && horizontalVelocity < 0.0f) ||
+                (wallJumpLockedDirectionX > 0.0f && horizontalVelocity > 0.0f)) {
+                horizontalVelocity = 0.0f;
+            }
+            wallJumpInputLockTimer = std::max(0.0f, wallJumpInputLockTimer - dt);
+            if (wallJumpInputLockTimer <= 0.0f) {
+                wallJumpLockedDirectionX = 0.0f;
+            }
         }
 
         if (apexHangActive) {
