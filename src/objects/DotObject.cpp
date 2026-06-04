@@ -92,9 +92,9 @@ void DotObject::update(float dt) {
             velocityY = physicsTuning.jump();
             grounded = false;
             if (canWallJump) {
-                wallJumpVelocityX = touchingWallLeft ? wallJumpHorizontalSpeed : -wallJumpHorizontalSpeed;
+                wallJumpVelocityX = wall_jump_force::velocityAwayFromWall(touchingWallLeft);
                 velocityX = wallJumpVelocityX;
-                wallJumpBoostTimer = wallJumpBoostDuration;
+                wallJumpBoostTimer = wall_jump_force::boostDuration;
                 wallJumpLockedDirectionX = wall_jump_input_lock::lockedDirectionForWall(touchingWallLeft);
                 wallJumpInputLockTimer = wall_jump_input_lock::durationSeconds;
                 jumpCount = 1;

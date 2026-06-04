@@ -40,6 +40,11 @@ add_executable(wall_jump_input_lock_tests
 )
 add_test(NAME wall_jump_input_lock_tests COMMAND wall_jump_input_lock_tests)
 
+add_executable(wall_jump_force_tests
+    tests/wall_jump_force_tests.cpp
+)
+add_test(NAME wall_jump_force_tests COMMAND wall_jump_force_tests)
+
 find_package(SDL2 CONFIG QUIET)
 find_package(glad CONFIG QUIET)
 find_package(glm CONFIG QUIET)
