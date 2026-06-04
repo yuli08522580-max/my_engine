@@ -22,8 +22,8 @@ int main() {
     bool ok = true;
 
     ok &= expect(
-        wall_jump_input_lock::durationSeconds >= 2.0f,
-        "wall-side input lock should last for a few seconds"
+        nearlyEqual(wall_jump_input_lock::durationSeconds, 0.3f),
+        "wall-side input lock should expire quickly without waiting for landing"
     );
 
     ok &= expect(
@@ -50,6 +50,14 @@ int main() {
     ok &= expect(
         nearlyEqual(wall_jump_input_lock::suppressWallSideInput(1.0f, 1.0f, 0.0f), 1.0f),
         "input should be restored after the lock timer expires"
+    );
+    ok &= expect(
+        nearlyEqual(wall_jump_input_lock::tickLockTimer(wall_jump_input_lock::durationSeconds, 0.1f), 0.2f),
+        "lock timer should decrease while airborne"
+    );
+    ok &= expect(
+        nearlyEqual(wall_jump_input_lock::tickLockTimer(wall_jump_input_lock::durationSeconds, 0.3f), 0.0f),
+        "lock timer should expire after the short wall-jump lock duration"
     );
 
     return ok ? EXIT_SUCCESS : EXIT_FAILURE;

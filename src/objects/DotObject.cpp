@@ -107,12 +107,14 @@ void DotObject::update(float dt) {
         }
 
         if (wallJumpInputLockTimer > 0.0f) {
-          if (!grounded &&
-                ((wallJumpLockedDirectionX < 0.0f && horizontalVelocity < 0.0f) ||
-                 (wallJumpLockedDirectionX > 0.0f && horizontalVelocity > 0.0f))) {
-                horizontalVelocity = 0.0f;
+            if (!grounded) {
+                horizontalVelocity = wall_jump_input_lock::suppressWallSideInput(
+                    horizontalVelocity,
+                    wallJumpLockedDirectionX,
+                    wallJumpInputLockTimer
+                );
             }
-            wallJumpInputLockTimer = std::max(0.0f, wallJumpInputLockTimer - dt);
+            wallJumpInputLockTimer = wall_jump_input_lock::tickLockTimer(wallJumpInputLockTimer, dt);
             if (wallJumpInputLockTimer <= 0.0f) {
                 wallJumpLockedDirectionX = 0.0f;
             }
