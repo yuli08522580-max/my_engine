@@ -6,6 +6,7 @@
 #include "BlockPlacement.h"
 #include "PlayerPhysicsTuning.h"
 #include "WallJumpInputLock.h"
+#include "WallJumpForce.h"
 #include "HorizontalMovement.h"
 #include <vector>
 
@@ -45,10 +46,6 @@ private:
     static constexpr float jumpApexHeight = 0.28f;
     // 最高到達点で静止する時間[s]。
     static constexpr float jumpApexHangDuration = 0.12f;
-    // 壁ジャンプ時に付与する水平方向速度。
-    static constexpr float wallJumpHorizontalSpeed = 1.1f;
-    // 壁ジャンプ時の水平加速を維持する時間[s]。
-    static constexpr float wallJumpBoostDuration = 0.1f;
 
     // プレイヤー中心位置(X)。
     float x = 0.0f;
