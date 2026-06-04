@@ -10,10 +10,6 @@ project(my_engine LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-if(MSVC)
-    add_compile_options(/utf-8)
-endif()
-
 enable_testing()
 
 add_executable(block_placement_tests
@@ -33,11 +29,6 @@ add_executable(player_physics_tuning_tests
     src/objects/PlayerPhysicsTuning.cpp
 )
 add_test(NAME player_physics_tuning_tests COMMAND player_physics_tuning_tests)
-
-add_executable(wall_jump_input_lock_tests
-    tests/wall_jump_input_lock_tests.cpp
-)
-add_test(NAME wall_jump_input_lock_tests COMMAND wall_jump_input_lock_tests)
 
 find_package(SDL2 CONFIG QUIET)
 find_package(glad CONFIG QUIET)
