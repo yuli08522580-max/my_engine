@@ -30,6 +30,11 @@ add_executable(player_physics_tuning_tests
 )
 add_test(NAME player_physics_tuning_tests COMMAND player_physics_tuning_tests)
 
+add_executable(wall_jump_input_lock_tests
+    tests/wall_jump_input_lock_tests.cpp
+)
+add_test(NAME wall_jump_input_lock_tests COMMAND wall_jump_input_lock_tests)
+
 find_package(SDL2 CONFIG QUIET)
 find_package(glad CONFIG QUIET)
 find_package(glm CONFIG QUIET)
