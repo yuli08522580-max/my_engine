@@ -5,6 +5,7 @@
 #include "../physics/Collision2D.h"
 #include "BlockPlacement.h"
 #include "PlayerPhysicsTuning.h"
+#include "WallJumpInputLock.h"
 #include <vector>
 
 // プレイヤーが操作する白いドットと配置済みブロックを管理・描画するオブジェクト。
