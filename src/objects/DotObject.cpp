@@ -93,8 +93,8 @@ void DotObject::update(float dt) {
             if (canWallJump) {
                 wallJumpVelocityX = touchingWallLeft ? wallJumpHorizontalSpeed : -wallJumpHorizontalSpeed;
                 wallJumpBoostTimer = wallJumpBoostDuration;
-                wallJumpLockedDirectionX = touchingWallLeft ? -1.0f : 1.0f;
-                wallJumpInputLockTimer = wallJumpInputLockDuration;
+                wallJumpLockedDirectionX = wall_jump_input_lock::lockedDirectionForWall(touchingWallLeft);
+                wallJumpInputLockTimer = wall_jump_input_lock::durationSeconds;
                 jumpCount = 1;
             } else {
                 jumpCount += 1;
@@ -107,10 +107,12 @@ void DotObject::update(float dt) {
         }
 
         if (wallJumpInputLockTimer > 0.0f) {
-            if ((wallJumpLockedDirectionX < 0.0f && horizontalVelocity < 0.0f) ||
-                (wallJumpLockedDirectionX > 0.0f && horizontalVelocity > 0.0f)) {
-                horizontalVelocity = 0.0f;
-            }
+            horizontalVelocity = wall_jump_input_lock::suppressWallSideInput(
+                horizontalVelocity,
+                wallJumpLockedDirectionX,
+                wallJumpInputLockTimer,
+                grounded
+            );
             wallJumpInputLockTimer = std::max(0.0f, wallJumpInputLockTimer - dt);
             if (wallJumpInputLockTimer <= 0.0f) {
                 wallJumpLockedDirectionX = 0.0f;
@@ -176,6 +178,13 @@ void DotObject::update(float dt) {
                 jumpInProgress = false;
                 apexHangActive = false;
                 apexHangTimer = 0.0f;
+                wallJumpInputLockTimer = wall_jump_input_lock::timerAfterLanding(
+                    wallJumpInputLockTimer,
+                    grounded
+                );
+                if (wallJumpInputLockTimer <= 0.0f) {
+                    wallJumpLockedDirectionX = 0.0f;
+                }
             }
             velocityY = 0.0f;
         }
@@ -198,6 +207,13 @@ void DotObject::update(float dt) {
         jumpInProgress = false;
         apexHangActive = false;
         apexHangTimer = 0.0f;
+        wallJumpInputLockTimer = wall_jump_input_lock::timerAfterLanding(
+            wallJumpInputLockTimer,
+            grounded
+        );
+        if (wallJumpInputLockTimer <= 0.0f) {
+            wallJumpLockedDirectionX = 0.0f;
+        }
     }
     y = clampedY;
 
