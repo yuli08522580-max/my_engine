@@ -27,18 +27,13 @@ int main() {
     );
 
     ok &= expect(
-        nearlyEqual(horizontal_movement::inputVelocity(1.0f, false), horizontal_movement::airborneInputSpeed),
-        "airborne input should be slower than grounded movement"
+        nearlyEqual(horizontal_movement::inputVelocity(1.0f, false), horizontal_movement::groundSpeed),
+        "airborne input should target the same top speed as grounded movement"
     );
 
     ok &= expect(
-        horizontal_movement::airborneInputSpeed < horizontal_movement::groundSpeed,
-        "airborne control should remain intentionally weaker than ground control"
-    );
-
-    ok &= expect(
-        nearlyEqual(horizontal_movement::inputVelocity(-1.0f, false), -horizontal_movement::airborneInputSpeed),
-        "airborne left input should keep direction while using the slower speed"
+        nearlyEqual(horizontal_movement::inputVelocity(-1.0f, false), -horizontal_movement::groundSpeed),
+        "airborne left input should keep direction while targeting ground speed"
     );
 
     ok &= expect(
@@ -55,14 +50,34 @@ int main() {
     );
 
     ok &= expect(
-        horizontal_movement::nextVelocity(0.0f, 1.0f, true, 1.0f / 60.0f) > 0.0f,
-        "ground input should accelerate from rest instead of snapping through state"
+        horizontal_movement::nextVelocity(0.0f, 1.0f, false, 1.0f / 60.0f)
+            < horizontal_movement::groundSpeed,
+        "vertical jumps should only gain a small amount of horizontal speed per airborne frame"
     );
 
     ok &= expect(
-        horizontal_movement::nextVelocity(horizontal_movement::groundSpeed, -1.0f, false, 1.0f / 60.0f)
-            < horizontal_movement::groundSpeed,
-        "opposite airborne input should be able to steer carried speed down gradually"
+        nearlyEqual(
+            horizontal_movement::nextVelocity(horizontal_movement::groundSpeed, 1.0f, false, 1.0f / 60.0f),
+            horizontal_movement::groundSpeed
+        ),
+        "same-direction airborne input should not accelerate past ground speed"
+    );
+
+    ok &= expect(
+        horizontal_movement::nextVelocity(0.0f, 1.0f, true, 1.0f / 60.0f) >
+            horizontal_movement::nextVelocity(0.0f, 1.0f, false, 1.0f / 60.0f),
+        "ground input should accelerate more strongly than airborne input"
+    );
+
+    const float oppositeAirborneVelocity = horizontal_movement::nextVelocity(
+        horizontal_movement::groundSpeed,
+        -1.0f,
+        false,
+        1.0f / 60.0f
+    );
+    ok &= expect(
+        oppositeAirborneVelocity < horizontal_movement::groundSpeed && oppositeAirborneVelocity > 0.0f,
+        "opposite airborne input should lightly brake carried ground speed without instantly reversing"
     );
 
     ok &= expect(
