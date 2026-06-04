@@ -107,11 +107,11 @@ void DotObject::update(float dt) {
         }
 
         if (wallJumpInputLockTimer > 0.0f) {
-            horizontalVelocity = wall_jump_input_lock::suppressWallSideInput(
-                horizontalVelocity,
-                wallJumpLockedDirectionX,
-                wallJumpInputLockTimer
-            );
+          if (!grounded &&
+                ((wallJumpLockedDirectionX < 0.0f && horizontalVelocity < 0.0f) ||
+                 (wallJumpLockedDirectionX > 0.0f && horizontalVelocity > 0.0f))) {
+                horizontalVelocity = 0.0f;
+            }
             wallJumpInputLockTimer = std::max(0.0f, wallJumpInputLockTimer - dt);
             if (wallJumpInputLockTimer <= 0.0f) {
                 wallJumpLockedDirectionX = 0.0f;
@@ -177,6 +177,8 @@ void DotObject::update(float dt) {
                 jumpInProgress = false;
                 apexHangActive = false;
                 apexHangTimer = 0.0f;
+                wallJumpInputLockTimer = 0.0f;
+                wallJumpLockedDirectionX = 0.0f;
             }
             velocityY = 0.0f;
         }
@@ -199,6 +201,8 @@ void DotObject::update(float dt) {
         jumpInProgress = false;
         apexHangActive = false;
         apexHangTimer = 0.0f;
+        wallJumpInputLockTimer = 0.0f;
+        wallJumpLockedDirectionX = 0.0f;
     }
     y = clampedY;
 
