@@ -5,6 +5,7 @@
 #include "../physics/Collision2D.h"
 #include "BlockPlacement.h"
 #include "PlayerPhysicsTuning.h"
+#include "WallJumpInputLock.h"
 #include <vector>
 
 // プレイヤーが操作する白いドットと配置済みブロックを管理・描画するオブジェクト。
@@ -47,8 +48,6 @@ private:
     static constexpr float wallJumpHorizontalSpeed = 1.1f;
     // 壁ジャンプ時の水平加速を維持する時間[s]。
     static constexpr float wallJumpBoostDuration = 0.1f;
-    // 壁ジャンプ直後に壁側入力を無効化する時間[s]。
-    static constexpr float wallJumpInputLockDuration = 0.12f;
 
     // プレイヤー中心位置(X)。
     float x = 0.0f;
