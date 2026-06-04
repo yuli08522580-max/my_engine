@@ -63,14 +63,16 @@ void DotObject::update(float dt) {
     increaseJumpKeyWasDown = increaseJumpPressed;
     decreaseJumpKeyWasDown = decreaseJumpPressed;
 
-    float horizontalVelocity = 0.0f;
+    float horizontalInput = 0.0f;
+    float horizontalVelocity = velocityX;
     float dy = 0.0f;
-    if (keys[SDL_SCANCODE_D]) horizontalVelocity += 1.0f;
-    if (keys[SDL_SCANCODE_A]) horizontalVelocity -= 1.0f;
+    if (keys[SDL_SCANCODE_D]) horizontalInput += 1.0f;
+    if (keys[SDL_SCANCODE_A]) horizontalInput -= 1.0f;
 
     if (stageEditMode) {
         if (keys[SDL_SCANCODE_W]) dy += 1.0f;
         if (keys[SDL_SCANCODE_S]) dy -= 1.0f;
+        velocityX = 0.0f;
         velocityY = 0.0f;
         wallJumpVelocityX = 0.0f;
         wallJumpBoostTimer = 0.0f;
@@ -91,6 +93,7 @@ void DotObject::update(float dt) {
             grounded = false;
             if (canWallJump) {
                 wallJumpVelocityX = touchingWallLeft ? wallJumpHorizontalSpeed : -wallJumpHorizontalSpeed;
+                velocityX = wallJumpVelocityX;
                 wallJumpBoostTimer = wallJumpBoostDuration;
                 wallJumpLockedDirectionX = wall_jump_input_lock::lockedDirectionForWall(touchingWallLeft);
                 wallJumpInputLockTimer = wall_jump_input_lock::durationSeconds;
@@ -107,8 +110,8 @@ void DotObject::update(float dt) {
 
         if (wallJumpInputLockTimer > 0.0f) {
             if (!grounded) {
-                horizontalVelocity = wall_jump_input_lock::suppressWallSideInput(
-                    horizontalVelocity,
+                horizontalInput = wall_jump_input_lock::suppressWallSideInput(
+                    horizontalInput,
                     wallJumpLockedDirectionX,
                     wallJumpInputLockTimer
                 );
@@ -133,18 +136,18 @@ void DotObject::update(float dt) {
             dy = velocityY;
         }
 
-        horizontalVelocity = horizontal_movement::inputVelocity(horizontalVelocity, grounded);
+        horizontalVelocity = horizontal_movement::nextVelocity(velocityX, horizontalInput, grounded, dt);
         if (wallJumpBoostTimer > 0.0f) {
-            horizontalVelocity += wallJumpVelocityX;
             wallJumpBoostTimer = std::max(0.0f, wallJumpBoostTimer - dt);
             if (wallJumpBoostTimer <= 0.0f) {
                 wallJumpVelocityX = 0.0f;
             }
         }
+        velocityX = horizontalVelocity;
     }
 
     if (stageEditMode) {
-        horizontalVelocity *= horizontal_movement::groundSpeed;
+        horizontalVelocity = horizontalInput * horizontal_movement::groundSpeed;
     }
     jumpKeyWasDown = jumpPressed;
 
@@ -168,10 +171,14 @@ void DotObject::update(float dt) {
         touchingWallRight = false;
         if (delta.x < 0.0f && x > expectedX) {
             touchingWallLeft = true;
+            velocityX = 0.0f;
         } else if (delta.x > 0.0f && x < expectedX) {
             touchingWallRight = true;
+            velocityX = 0.0f;
         }
-        if ((velocityY < 0.0f && y > expectedY) || (velocityY > 0.0f && y < expectedY)) {
+        const bool collidedVertically =
+            (velocityY < 0.0f && y > expectedY) || (velocityY > 0.0f && y < expectedY);
+        if (collidedVertically) {
             if (velocityY < 0.0f && y > expectedY) {
                 grounded = true;
                 jumpCount = 0;
@@ -182,6 +189,8 @@ void DotObject::update(float dt) {
                 wallJumpLockedDirectionX = 0.0f;
             }
             velocityY = 0.0f;
+        } else if (velocityY < 0.0f) {
+            grounded = false;
         }
 
         if (jumpInProgress && !apexHangActive && y >= jumpApexY) {
@@ -193,7 +202,11 @@ void DotObject::update(float dt) {
     }
 
     // 画面端の少し内側に移動範囲を制限する。
+    const float unclampedX = x;
     x = std::clamp(x, -0.95f, 0.95f);
+    if (!stageEditMode && x != unclampedX) {
+        velocityX = 0.0f;
+    }
     const float clampedY = std::clamp(y, -0.95f, 0.95f);
     if (!stageEditMode && clampedY != y && velocityY < 0.0f) {
         grounded = true;

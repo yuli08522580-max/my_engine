@@ -62,6 +62,8 @@ private:
     float placeCooldown = 0.0f;
     // ブロック削除のクールダウン残り時間[s]。
     float removeCooldown = 0.0f;
+    // 水平方向の速度。地面や坂で得た加速を空中でも保持する。
+    float velocityX = 0.0f;
     // 垂直方向の速度。
     float velocityY = 0.0f;
     // 接地中かどうか。

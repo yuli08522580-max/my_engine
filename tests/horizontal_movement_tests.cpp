@@ -46,5 +46,32 @@ int main() {
         "no airborne input should not create horizontal movement"
     );
 
+    ok &= expect(
+        nearlyEqual(
+            horizontal_movement::nextVelocity(horizontal_movement::groundSpeed, 0.0f, false, 1.0f / 60.0f),
+            horizontal_movement::groundSpeed
+        ),
+        "airborne frames without input should preserve speed gained on the ground or slopes"
+    );
+
+    ok &= expect(
+        horizontal_movement::nextVelocity(0.0f, 1.0f, true, 1.0f / 60.0f) > 0.0f,
+        "ground input should accelerate from rest instead of snapping through state"
+    );
+
+    ok &= expect(
+        horizontal_movement::nextVelocity(horizontal_movement::groundSpeed, -1.0f, false, 1.0f / 60.0f)
+            < horizontal_movement::groundSpeed,
+        "opposite airborne input should be able to steer carried speed down gradually"
+    );
+
+    ok &= expect(
+        nearlyEqual(
+            horizontal_movement::nextVelocity(horizontal_movement::maxCarrySpeed * 2.0f, 0.0f, false, 1.0f / 60.0f),
+            horizontal_movement::maxCarrySpeed
+        ),
+        "carried airborne speed should remain capped"
+    );
+
     return ok ? EXIT_SUCCESS : EXIT_FAILURE;
 }
