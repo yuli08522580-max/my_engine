@@ -6,6 +6,7 @@
 #include "BlockPlacement.h"
 #include "PlayerPhysicsTuning.h"
 #include "WallJumpInputLock.h"
+#include "HorizontalMovement.h"
 #include <vector>
 
 // プレイヤーが操作する白いドットと配置済みブロックを管理・描画するオブジェクト。

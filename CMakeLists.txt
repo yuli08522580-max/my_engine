@@ -30,6 +30,11 @@ add_executable(player_physics_tuning_tests
 )
 add_test(NAME player_physics_tuning_tests COMMAND player_physics_tuning_tests)
 
+add_executable(horizontal_movement_tests
+    tests/horizontal_movement_tests.cpp
+)
+add_test(NAME horizontal_movement_tests COMMAND horizontal_movement_tests)
+
 add_executable(wall_jump_input_lock_tests
     tests/wall_jump_input_lock_tests.cpp
 )

@@ -68,7 +68,6 @@ void DotObject::update(float dt) {
     if (keys[SDL_SCANCODE_D]) horizontalVelocity += 1.0f;
     if (keys[SDL_SCANCODE_A]) horizontalVelocity -= 1.0f;
 
-    const float speed = 0.6f;
     if (stageEditMode) {
         if (keys[SDL_SCANCODE_W]) dy += 1.0f;
         if (keys[SDL_SCANCODE_S]) dy -= 1.0f;
@@ -134,7 +133,7 @@ void DotObject::update(float dt) {
             dy = velocityY;
         }
 
-        horizontalVelocity *= speed;
+        horizontalVelocity = horizontal_movement::inputVelocity(horizontalVelocity, grounded);
         if (wallJumpBoostTimer > 0.0f) {
             horizontalVelocity += wallJumpVelocityX;
             wallJumpBoostTimer = std::max(0.0f, wallJumpBoostTimer - dt);
@@ -145,7 +144,7 @@ void DotObject::update(float dt) {
     }
 
     if (stageEditMode) {
-        horizontalVelocity *= speed;
+        horizontalVelocity *= horizontal_movement::groundSpeed;
     }
     jumpKeyWasDown = jumpPressed;
 
